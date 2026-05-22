@@ -8,8 +8,20 @@
       content="Marie-Chantal immersive 3D modeling portfolio for CAD, SolidWorks, Rhinoceros and Blender work."
     />
     <title>Marie-Chantal | 3D Modeling Portfolio</title>
+    <style>
+      body.app-loading {
+        margin: 0;
+        min-height: 100vh;
+        overflow: hidden;
+        background: #dff6ff;
+      }
+
+      body.app-loading main {
+        opacity: 0;
+      }
+    </style>
   </head>
-  <body>
+  <body class="app-loading">
     <canvas id="world"></canvas>
     <main id="interface">
       <section class="titleplate">
@@ -33,6 +45,46 @@
         </div>
       </aside>
 
+      <a
+        id="aboutProfile"
+        class="about-profile"
+        href="https://www.linkedin.com/in/marie-chantal-nyirahategekimana/"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Open Marie-Chantal's LinkedIn profile"
+      >
+        <div class="linkedin-card">
+          <div class="linkedin-cover" aria-hidden="true">
+            <div class="campus-building">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <img class="linkedin-avatar" src="./visuals/profile-picture.jpeg" alt="Marie-Chantal Nyirahategekimana" />
+          <div class="linkedin-body">
+            <div class="linkedin-main">
+              <h2>Marie-Chantal Nyirahategekimana</h2>
+              <p class="linkedin-pronouns">She/Her</p>
+            </div>
+            <p class="linkedin-headline">
+              Machine Learning Engineer | Chemical Engineering Howard University alum | Intel Scholar |
+              DOW SURE Scholar | SWE Honeywell Scholar
+            </p>
+            <p class="linkedin-location">Houston, Texas, United States · <span>Contact info</span></p>
+            <p class="linkedin-connections">500+ connections</p>
+            <div class="linkedin-school">
+              <span class="howard-mark">Howard<br />University</span>
+              <strong>Howard University</strong>
+            </div>
+            <div class="linkedin-actions">
+              <span class="message-action">Message</span>
+              <span class="more-action">More</span>
+            </div>
+          </div>
+        </div>
+      </a>
+
       <nav class="map" aria-label="Portfolio room map">
         <button data-room="home" class="active">Home</button>
         <button data-room="omniwheel">Omniwheel</button>
@@ -43,7 +95,7 @@
         <button data-room="shoe">Heating Bowl SI¹⁴</button>
         <button data-room="hanger">Heating Sphere SI¹⁴</button>
         <button data-room="cow">Cow Toy</button>
-        <button data-room="credits">Credits</button>
+        <button data-room="credits">About me</button>
       </nav>
 
       <button id="enterWorld" class="enter">Enter first-person mode</button>

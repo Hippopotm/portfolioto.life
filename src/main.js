@@ -35,10 +35,12 @@ const roomCopy = document.querySelector("#roomCopy");
 const toolchain = document.querySelector("#toolchain");
 const panel = document.querySelector(".panel");
 const projectBadge = document.querySelector("#projectBadge");
+const aboutProfile = document.querySelector("#aboutProfile");
 const enterWorld = document.querySelector("#enterWorld");
 const mapButtons = [...document.querySelectorAll(".map button")];
 const planTray = document.querySelector("#planTray");
 const pdfStage = document.querySelector("#pdfStage");
+const profileImageUrl = assetUrl("/visuals/profile-picture.jpeg");
 const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(assetUrl("/draco/"));
@@ -168,14 +170,12 @@ const rooms = [
   },
   {
     id: "credits",
-    name: "Credits Room",
+    name: "About me",
     position: [88, -22],
     color: 0xffffff,
-    tools: "AI engineering / 3D modeling / purpose-driven projects",
-    description:
-      "AI engineer following a Master's degree at Johns Hopkins University, currently leading multiple activities including 3D modeling.",
-    copy:
-      "AI engineer following a Master's degree at Johns Hopkins University, currently leading multiple activities including 3D modeling."
+    tools: "",
+    description: "",
+    copy: "A little more about me"
   }
 ];
 
@@ -632,9 +632,6 @@ function createCowToy() {
     group.add(mesh(new THREE.SphereGeometry(0.155, 24, 12), materials.black, [2.18, 1.7, z], [0, 0, 0], [1, 1.12, 0.52]));
     group.add(mesh(new THREE.SphereGeometry(0.035, 12, 8), materials.white, [2.27, 1.75, z - 0.04 * Math.sign(z)]));
   });
-  group.add(mesh(new THREE.TorusGeometry(0.27, 0.022, 12, 64), mouth, [2.49, 1.28, 0], [0, Math.PI / 2, 0], [1, 0.72, 1]));
-  group.add(mesh(new THREE.TorusGeometry(0.12, 0.012, 8, 32), spot, [2.52, 1.41, -0.12], [0, Math.PI / 2, 0], [1, 0.75, 1]));
-  group.add(mesh(new THREE.TorusGeometry(0.12, 0.012, 8, 32), spot, [2.52, 1.41, 0.12], [0, Math.PI / 2, 0], [1, 0.75, 1]));
   group.add(mesh(new THREE.ConeGeometry(0.12, 0.42, 18), materials.brass, [1.58, 2.15, -0.34], [0.18, 0.15, -0.18]));
   group.add(mesh(new THREE.ConeGeometry(0.12, 0.42, 18), materials.brass, [1.58, 2.15, 0.34], [0.18, -0.15, 0.18]));
   group.add(mesh(new THREE.SphereGeometry(0.18, 20, 10), pink, [1.36, 1.82, -0.55], [0, 0.1, 0], [0.72, 0.28, 0.5]));
@@ -648,9 +645,6 @@ function createCowToy() {
     [-1.0, 1.72, 0.38, 0.22, 0.14],
     [0.16, 1.78, -0.48, 0.2, 0.13],
     [1.2, 1.48, 0.42, 0.21, 0.14],
-    [1.38, 1.92, -0.16, 0.18, 0.12],
-    [1.95, 1.98, 0.44, 0.16, 0.1],
-    [1.82, 1.24, -0.48, 0.17, 0.11],
     [0.38, 0.82, 0.64, 0.16, 0.1],
     [-1.42, 0.96, 0.46, 0.2, 0.12]
   ].forEach(([x, y, z, sx, sy], index) =>
@@ -668,14 +662,150 @@ function createCowToy() {
 
 function createCreditsSculpture() {
   const group = new THREE.Group();
-  const rings = [1.1, 1.55, 2.0].map((r, i) =>
-    mesh(new THREE.TorusGeometry(r, 0.05, 12, 128), i === 0 ? materials.brass : i === 1 ? materials.blue : materials.white, [0, 1.8 + i * 0.55, 0], [Math.PI / 2 + i * 0.34, 0.2 * i, 0])
+  const canvas = document.createElement("canvas");
+  canvas.width = 1536;
+  canvas.height = 980;
+  const ctx = canvas.getContext("2d");
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  const drawRoundRect = (x, y, w, h, r) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  };
+
+  const drawCard = (profileImage = null) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ffffff";
+    drawRoundRect(18, 18, 1500, 944, 28);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(25,25,25,0.14)";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.save();
+    drawRoundRect(18, 18, 1500, 300, 28);
+    ctx.clip();
+    const cover = ctx.createLinearGradient(18, 18, 1518, 318);
+    cover.addColorStop(0, "#c8914d");
+    cover.addColorStop(0.35, "#f4e9cf");
+    cover.addColorStop(0.72, "#b9c8ac");
+    cover.addColorStop(1, "#f6f0dd");
+    ctx.fillStyle = cover;
+    ctx.fillRect(18, 18, 1500, 300);
+    ctx.fillStyle = "rgba(125,52,31,0.68)";
+    ctx.fillRect(690, 142, 420, 176);
+    ctx.fillRect(810, 98, 210, 220);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (let x = 725; x < 1080; x += 42) ctx.fillRect(x, 170, 12, 118);
+    ctx.fillStyle = "rgba(80,120,66,0.34)";
+    ctx.beginPath();
+    ctx.ellipse(1250, 210, 210, 110, -0.25, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(178,120,44,0.38)";
+    ctx.beginPath();
+    ctx.ellipse(200, 220, 260, 120, 0.25, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(185, 338, 118, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.clip();
+    if (profileImage) {
+      ctx.drawImage(profileImage, 67, 220, 236, 236);
+    } else {
+      ctx.fillStyle = "#e8d0b7";
+      ctx.fillRect(67, 220, 236, 236);
+    }
+    ctx.restore();
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(185, 338, 118, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "#191919";
+    ctx.font = "800 62px Inter, Arial, sans-serif";
+    ctx.fillText("Marie-Chantal Nyirahategekimana", 86, 565);
+    ctx.strokeStyle = "#565656";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.arc(855, 548, 24, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#666666";
+    ctx.font = "400 38px Inter, Arial, sans-serif";
+    ctx.fillText("She/Her", 895, 562);
+
+    ctx.fillStyle = "#191919";
+    ctx.font = "500 38px Inter, Arial, sans-serif";
+    ctx.fillText("Machine Learning Engineer | Chemical Engineering Howard", 86, 650);
+    ctx.fillText("University alum | Intel Scholar | DOW SURE Scholar | SWE", 86, 700);
+    ctx.fillText("Honeywell Scholar", 86, 750);
+    ctx.fillStyle = "#666666";
+    ctx.font = "400 34px Inter, Arial, sans-serif";
+    ctx.fillText("Houston, Texas, United States · ", 86, 812);
+    ctx.fillStyle = "#0a66c2";
+    ctx.font = "700 34px Inter, Arial, sans-serif";
+    ctx.fillText("Contact info", 568, 812);
+    ctx.fillText("500+ connections", 86, 874);
+
+    ctx.fillStyle = "#17324d";
+    ctx.beginPath();
+    ctx.arc(1118, 548, 32, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#a23b2a";
+    ctx.lineWidth = 5;
+    ctx.stroke();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 11px Inter, Arial, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("HOWARD", 1118, 548);
+    ctx.fillText("UNIVERSITY", 1118, 562);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#191919";
+    ctx.font = "800 36px Inter, Arial, sans-serif";
+    ctx.fillText("Howard University", 1174, 562);
+
+    ctx.fillStyle = "#0a66c2";
+    drawRoundRect(86, 900, 178, 56, 28);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "800 30px Inter, Arial, sans-serif";
+    ctx.fillText("Message", 130, 938);
+    ctx.strokeStyle = "#505050";
+    ctx.lineWidth = 3;
+    drawRoundRect(286, 900, 104, 56, 28);
+    ctx.stroke();
+    ctx.fillStyle = "#3d3d3d";
+    ctx.fillText("More", 319, 938);
+    texture.needsUpdate = true;
+  };
+
+  drawCard();
+  const image = new Image();
+  image.onload = () => drawCard(image);
+  image.src = profileImageUrl;
+
+  const card = new THREE.Mesh(
+    new THREE.PlaneGeometry(7.6, 4.85),
+    new THREE.MeshBasicMaterial({ map: texture, side: THREE.FrontSide })
   );
-  rings.forEach((r) => group.add(r));
-  group.add(mesh(new THREE.IcosahedronGeometry(0.92, 2), materials.glass, [0, 2.55, 0]));
-  group.add(makeTextSprite("Engineer + AI Builder", 0xffffff));
-  group.children[group.children.length - 1].position.set(0, 4.2, 0);
-  group.children[group.children.length - 1].scale.set(4.8, 1.2, 1);
+  card.position.set(0, 2.9, 0.2);
+  card.visible = false;
+  card.userData.isAboutCard = true;
+  group.add(card);
   return group;
 }
 
@@ -847,14 +977,16 @@ rooms.forEach((room) => {
   }
 
   const exhibit = modelFactories[room.id]();
-  exhibit.position.set(0, 0.1, 0);
+  exhibit.position.set(0, room.id === "credits" ? 0 : 0.1, 0);
   exhibit.userData.roomId = room.id;
   exhibit.userData.baseY = exhibit.position.y;
   group.add(exhibit);
-  const pedestal = mesh(new THREE.CylinderGeometry(3.4, 3.7, 0.55, 80), new THREE.MeshStandardMaterial({ color: 0xf5efe0, roughness: 0.48, metalness: 0.08 }), [0, 0.1, 0]);
-  group.add(pedestal);
+  if (room.id !== "credits") {
+    const pedestal = mesh(new THREE.CylinderGeometry(3.4, 3.7, 0.55, 80), new THREE.MeshStandardMaterial({ color: 0xf5efe0, roughness: 0.48, metalness: 0.08 }), [0, 0.1, 0]);
+    group.add(pedestal);
+  }
   group.userData.roomId = room.id;
-  const spin = room.id === "lamp" ? 0 : room.id === "credits" ? 0.12 : 0.08;
+  const spin = room.id === "lamp" || room.id === "credits" ? 0 : 0.08;
   exhibits.push({ id: room.id, group: exhibit, spin });
   exhibitByRoomId.set(room.id, exhibit);
 });
@@ -1082,9 +1214,18 @@ function setActiveRoom(room) {
   else roomCopy.textContent = room.copy;
   updateRoomPanel(room, hadActiveRoom);
   interfaceLayer.classList.toggle("home-active", room.id === "home");
+  interfaceLayer.classList.toggle("about-active", room.id === "credits");
+  updateAboutProfileVisibility();
   mapButtons.forEach((button) => button.classList.toggle("active", button.dataset.room === room.id));
   if (!transition) ensureRoomModelLoaded(room.id);
   if (!transition) updateProjectAssets(room);
+}
+
+function updateAboutProfileVisibility() {
+  aboutProfile.classList.remove("visible");
+  const creditsExhibit = exhibitByRoomId.get("credits");
+  const aboutCard = creditsExhibit?.children.find((child) => child.userData.isAboutCard);
+  if (aboutCard) aboutCard.visible = activeRoom?.id === "credits" && !transition;
 }
 
 mapButtons.forEach((button) => button.addEventListener("click", () => startRoomTransition(button.dataset.room)));
@@ -1093,6 +1234,7 @@ enterWorld.addEventListener("click", () => canvas.requestPointerLock());
 document.addEventListener("pointerlockchange", () => {
   const locked = document.pointerLockElement === canvas;
   enterWorld.textContent = locked ? "click escape to leave first-person mode" : "Enter first-person mode";
+  updateAboutProfileVisibility();
   if (!locked) {
     viewReset = {
       startClock: clock.elapsedTime,
@@ -1212,6 +1354,7 @@ function updatePlayer(dt) {
       camera.fov = transition.endFov;
       camera.updateProjectionMatrix();
       transition = null;
+      updateAboutProfileVisibility();
       updateProjectAssets(destinationRoom);
       if (deferredModelRooms.has(destinationRoom.id)) {
         if (!loadedModels.has(destinationRoom.id)) {
@@ -1339,6 +1482,7 @@ window.addEventListener("resize", () => {
 });
 
 setActiveRoom(rooms[0]);
+document.body.classList.remove("app-loading");
 animate();
 setTimeout(() => {
   preloadExternalModels();
