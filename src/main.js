@@ -23,6 +23,7 @@ const camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerH
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const clock = new THREE.Clock();
+const assetUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 
 const world = new CANNON.World({ gravity: new CANNON.Vec3(0, -32, 0) });
 world.broadphase = new CANNON.SAPBroadphase(world);
@@ -40,7 +41,7 @@ const planTray = document.querySelector("#planTray");
 const pdfStage = document.querySelector("#pdfStage");
 const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("/draco/");
+dracoLoader.setDecoderPath(assetUrl("/draco/"));
 gltfLoader.setDRACOLoader(dracoLoader);
 const stlLoader = new STLLoader();
 
@@ -182,22 +183,22 @@ const projectPlans = {
   snowboard: [
     {
       title: "Mountainboard plan",
-      url: "/plans/snowboard.pdf",
-      image: "/plan-previews/snowboard.png"
+      url: assetUrl("/plans/snowboard.pdf"),
+      image: assetUrl("/plan-previews/snowboard.png")
     }
   ],
   shoe: [
-    { title: "Part 1 drawing", url: "/plans/heating-bowl-part-1.pdf", image: "/plan-previews/heating-bowl-part-1.png" },
-    { title: "Part 2 drawing", url: "/plans/heating-bowl-part-2.pdf", image: "/plan-previews/heating-bowl-part-2.png" },
-    { title: "Part 3 drawing", url: "/plans/heating-bowl-part-3.pdf", image: "/plan-previews/heating-bowl-part-3.png" },
-    { title: "Part 4 drawing", url: "/plans/heating-bowl-part-4.pdf", image: "/plan-previews/heating-bowl-part-4.png" }
+    { title: "Part 1 drawing", url: assetUrl("/plans/heating-bowl-part-1.pdf"), image: assetUrl("/plan-previews/heating-bowl-part-1.png") },
+    { title: "Part 2 drawing", url: assetUrl("/plans/heating-bowl-part-2.pdf"), image: assetUrl("/plan-previews/heating-bowl-part-2.png") },
+    { title: "Part 3 drawing", url: assetUrl("/plans/heating-bowl-part-3.pdf"), image: assetUrl("/plan-previews/heating-bowl-part-3.png") },
+    { title: "Part 4 drawing", url: assetUrl("/plans/heating-bowl-part-4.pdf"), image: assetUrl("/plan-previews/heating-bowl-part-4.png") }
   ],
   chair: [
-    { title: "Physical model render", url: "/visuals/swing-render.png", image: "/visuals/swing-render.png" },
-    { title: "3D model edges", url: "/visuals/swing-edges.png", image: "/visuals/swing-edges.png" },
-    { title: "Dimension view 1", url: "/visuals/swing-dimensions-1.png", image: "/visuals/swing-dimensions-1.png" },
-    { title: "Dimension view 2", url: "/visuals/swing-dimensions-2.png", image: "/visuals/swing-dimensions-2.png" },
-    { title: "Dimension view 3", url: "/visuals/swing-dimensions-3.png", image: "/visuals/swing-dimensions-3.png" }
+    { title: "Physical model render", url: assetUrl("/visuals/swing-render.png"), image: assetUrl("/visuals/swing-render.png") },
+    { title: "3D model edges", url: assetUrl("/visuals/swing-edges.png"), image: assetUrl("/visuals/swing-edges.png") },
+    { title: "Dimension view 1", url: assetUrl("/visuals/swing-dimensions-1.png"), image: assetUrl("/visuals/swing-dimensions-1.png") },
+    { title: "Dimension view 2", url: assetUrl("/visuals/swing-dimensions-2.png"), image: assetUrl("/visuals/swing-dimensions-2.png") },
+    { title: "Dimension view 3", url: assetUrl("/visuals/swing-dimensions-3.png"), image: assetUrl("/visuals/swing-dimensions-3.png") }
   ]
 };
 
@@ -217,8 +218,8 @@ const roomStyles = {
 const pdfRooms = {
   lamp: {
     title: "Shelf plan",
-    url: "/plans/etagere.pdf",
-    image: "/plan-previews/etagere.png"
+    url: assetUrl("/plans/etagere.pdf"),
+    image: assetUrl("/plan-previews/etagere.png")
   }
 };
 
@@ -685,7 +686,7 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
 
   if (roomId === "omniwheel") {
     try {
-      const geometry = await stlLoader.loadAsync("/models/omniwheel-vehicle.stl");
+      const geometry = await stlLoader.loadAsync(assetUrl("/models/omniwheel-vehicle.stl"));
       geometry.computeVertexNormals();
       const imported = new THREE.Mesh(
         geometry,
@@ -717,18 +718,18 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
   }
 
   const modelUrls = {
-    home: "/models/welcome.glb",
-    snowboard: "/models/snowboard.gltf",
-    tripod: "/models/tripod.glb",
-    chair: "/models/swing.glb",
-    shoe: "/models/heating-bowl.glb",
-    hanger: "/models/heating-sphere.gltf"
+    home: assetUrl("/models/welcome.glb"),
+    snowboard: assetUrl("/models/snowboard.gltf"),
+    tripod: assetUrl("/models/tripod.glb"),
+    chair: assetUrl("/models/swing.glb"),
+    shoe: assetUrl("/models/heating-bowl.glb"),
+    hanger: assetUrl("/models/heating-sphere.gltf")
   };
   const previewModelUrls = {
-    shoe: "/models/heating-bowl-preview.glb",
-    tripod: "/models/tripod-preview.glb"
+    shoe: assetUrl("/models/heating-bowl-preview.glb"),
+    tripod: assetUrl("/models/tripod-preview.glb")
   };
-  const url = preview ? previewModelUrls[roomId] : modelUrls[roomId] || `/models/${roomId}.glb`;
+  const url = preview ? previewModelUrls[roomId] : modelUrls[roomId] || assetUrl(`/models/${roomId}.glb`);
   if (!url) return;
   try {
     const response = await fetch(url, { method: "HEAD" });
