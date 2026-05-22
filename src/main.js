@@ -87,7 +87,7 @@ const rooms = [
     color: 0xf3c969,
     tools: "SolidWorks / Raspberry Pi / phone app control / CNC milling",
     description:
-      "A two-month project to select components, evaluate feasibility and run resistance tests. Physically built with SolidWorks-modeled parts, Raspberry Pi control, manual programming, a self-programmed phone app, and metal parts cut with a milling machine.",
+      "Project led from feasibility evaluation to component selection and resistance testing. Physically built with SolidWorks-modeled parts, Raspberry Pi control, manual programming, a self-programmed phone app, and metal parts cut with a milling machine.",
     copy:
       "Designed for highly flexible movement, this omniwheel vehicle can move forward, backward, sideways, diagonally, and rotate in place with precision. Its specialized wheels make it ideal for tight navigation, robotics testing, and environments that require quick, smooth maneuvering."
   },
@@ -98,7 +98,7 @@ const rooms = [
     color: 0x89e7ff,
     tools: "SolidWorks / Onshape / 3D prototype",
     description:
-      "A two-month modeling exercise made from an existing model, recreated and studied in SolidWorks and Onshape. It remained a 3D prototype rather than being physically rebuilt.",
+      "Made from an existing model as a modeling exercise, recreated and studied in SolidWorks and Onshape. It remained a 3D prototype rather than being physically rebuilt.",
     copy:
       "This mountainboard combines the feel of board sports with an all-terrain wheel system, allowing riders to glide over rougher surfaces beyond snow. Its flexible frame, large textured wheels, and suspension-style details make it designed for stability, smooth movement, and adventurous outdoor riding."
   },
