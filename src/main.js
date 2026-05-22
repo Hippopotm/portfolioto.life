@@ -40,7 +40,6 @@ const enterWorld = document.querySelector("#enterWorld");
 const mapButtons = [...document.querySelectorAll(".map button")];
 const planTray = document.querySelector("#planTray");
 const pdfStage = document.querySelector("#pdfStage");
-const profileImageUrl = assetUrl("/visuals/profile-picture.jpeg");
 const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(assetUrl("/draco/"));
@@ -661,152 +660,7 @@ function createCowToy() {
 }
 
 function createCreditsSculpture() {
-  const group = new THREE.Group();
-  const canvas = document.createElement("canvas");
-  canvas.width = 1536;
-  canvas.height = 980;
-  const ctx = canvas.getContext("2d");
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-
-  const drawRoundRect = (x, y, w, h, r) => {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  };
-
-  const drawCard = (profileImage = null) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ffffff";
-    drawRoundRect(18, 18, 1500, 944, 28);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(25,25,25,0.14)";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.save();
-    drawRoundRect(18, 18, 1500, 300, 28);
-    ctx.clip();
-    const cover = ctx.createLinearGradient(18, 18, 1518, 318);
-    cover.addColorStop(0, "#c8914d");
-    cover.addColorStop(0.35, "#f4e9cf");
-    cover.addColorStop(0.72, "#b9c8ac");
-    cover.addColorStop(1, "#f6f0dd");
-    ctx.fillStyle = cover;
-    ctx.fillRect(18, 18, 1500, 300);
-    ctx.fillStyle = "rgba(125,52,31,0.68)";
-    ctx.fillRect(690, 142, 420, 176);
-    ctx.fillRect(810, 98, 210, 220);
-    ctx.fillStyle = "rgba(255,255,255,0.5)";
-    for (let x = 725; x < 1080; x += 42) ctx.fillRect(x, 170, 12, 118);
-    ctx.fillStyle = "rgba(80,120,66,0.34)";
-    ctx.beginPath();
-    ctx.ellipse(1250, 210, 210, 110, -0.25, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "rgba(178,120,44,0.38)";
-    ctx.beginPath();
-    ctx.ellipse(200, 220, 260, 120, 0.25, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(185, 338, 118, 0, Math.PI * 2);
-    ctx.fillStyle = "#ffffff";
-    ctx.fill();
-    ctx.clip();
-    if (profileImage) {
-      ctx.drawImage(profileImage, 67, 220, 236, 236);
-    } else {
-      ctx.fillStyle = "#e8d0b7";
-      ctx.fillRect(67, 220, 236, 236);
-    }
-    ctx.restore();
-    ctx.lineWidth = 10;
-    ctx.strokeStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(185, 338, 118, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.fillStyle = "#191919";
-    ctx.font = "800 62px Inter, Arial, sans-serif";
-    ctx.fillText("Marie-Chantal Nyirahategekimana", 86, 565);
-    ctx.strokeStyle = "#565656";
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.arc(855, 548, 24, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = "#666666";
-    ctx.font = "400 38px Inter, Arial, sans-serif";
-    ctx.fillText("She/Her", 895, 562);
-
-    ctx.fillStyle = "#191919";
-    ctx.font = "500 38px Inter, Arial, sans-serif";
-    ctx.fillText("Machine Learning Engineer | Chemical Engineering Howard", 86, 650);
-    ctx.fillText("University alum | Intel Scholar | DOW SURE Scholar | SWE", 86, 700);
-    ctx.fillText("Honeywell Scholar", 86, 750);
-    ctx.fillStyle = "#666666";
-    ctx.font = "400 34px Inter, Arial, sans-serif";
-    ctx.fillText("Houston, Texas, United States · ", 86, 812);
-    ctx.fillStyle = "#0a66c2";
-    ctx.font = "700 34px Inter, Arial, sans-serif";
-    ctx.fillText("Contact info", 568, 812);
-    ctx.fillText("500+ connections", 86, 874);
-
-    ctx.fillStyle = "#17324d";
-    ctx.beginPath();
-    ctx.arc(1118, 548, 32, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#a23b2a";
-    ctx.lineWidth = 5;
-    ctx.stroke();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 11px Inter, Arial, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("HOWARD", 1118, 548);
-    ctx.fillText("UNIVERSITY", 1118, 562);
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#191919";
-    ctx.font = "800 36px Inter, Arial, sans-serif";
-    ctx.fillText("Howard University", 1174, 562);
-
-    ctx.fillStyle = "#0a66c2";
-    drawRoundRect(86, 900, 178, 56, 28);
-    ctx.fill();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 30px Inter, Arial, sans-serif";
-    ctx.fillText("Message", 130, 938);
-    ctx.strokeStyle = "#505050";
-    ctx.lineWidth = 3;
-    drawRoundRect(286, 900, 104, 56, 28);
-    ctx.stroke();
-    ctx.fillStyle = "#3d3d3d";
-    ctx.fillText("More", 319, 938);
-    texture.needsUpdate = true;
-  };
-
-  drawCard();
-  const image = new Image();
-  image.onload = () => drawCard(image);
-  image.src = profileImageUrl;
-
-  const card = new THREE.Mesh(
-    new THREE.PlaneGeometry(7.6, 4.85),
-    new THREE.MeshBasicMaterial({ map: texture, side: THREE.FrontSide })
-  );
-  card.position.set(0, 2.9, 0.2);
-  card.visible = false;
-  card.userData.isAboutCard = true;
-  group.add(card);
-  return group;
+  return new THREE.Group();
 }
 
 function createPdfObject(label = "PDF Plan") {
@@ -1222,10 +1076,8 @@ function setActiveRoom(room) {
 }
 
 function updateAboutProfileVisibility() {
-  aboutProfile.classList.remove("visible");
-  const creditsExhibit = exhibitByRoomId.get("credits");
-  const aboutCard = creditsExhibit?.children.find((child) => child.userData.isAboutCard);
-  if (aboutCard) aboutCard.visible = activeRoom?.id === "credits" && !transition;
+  const shouldShow = activeRoom?.id === "credits" && !transition;
+  aboutProfile.classList.toggle("visible", shouldShow);
 }
 
 mapButtons.forEach((button) => button.addEventListener("click", () => startRoomTransition(button.dataset.room)));
