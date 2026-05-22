@@ -283,6 +283,7 @@ let isPanningPdf = false;
 let lastPdfPointer = new THREE.Vector2(0, 0);
 let copyTypeTimer = null;
 let panelTimer = null;
+const planDeckOrder = new Map();
 const keys = new Set();
 const teleportTarget = new THREE.Vector3(0, 2.4, 6);
 
@@ -627,9 +628,13 @@ function createCowToy() {
   group.add(mesh(new THREE.SphereGeometry(0.34, 32, 16), pink, [2.17, 1.36, 0], [0, 0, 0], [0.9, 0.55, 0.7]));
   group.add(mesh(new THREE.SphereGeometry(0.08, 16, 8), materials.black, [2.42, 1.4, -0.12]));
   group.add(mesh(new THREE.SphereGeometry(0.08, 16, 8), materials.black, [2.42, 1.4, 0.12]));
-  group.add(mesh(new THREE.SphereGeometry(0.11, 18, 10), materials.black, [1.95, 1.72, -0.25]));
-  group.add(mesh(new THREE.SphereGeometry(0.11, 18, 10), materials.black, [1.95, 1.72, 0.25]));
-  group.add(mesh(new THREE.TorusGeometry(0.18, 0.014, 8, 28, Math.PI), mouth, [2.42, 1.25, 0], [0, Math.PI / 2, -Math.PI / 2]));
+  [-0.28, 0.28].forEach((z) => {
+    group.add(mesh(new THREE.SphereGeometry(0.155, 24, 12), materials.black, [2.18, 1.7, z], [0, 0, 0], [1, 1.12, 0.52]));
+    group.add(mesh(new THREE.SphereGeometry(0.035, 12, 8), materials.white, [2.27, 1.75, z - 0.04 * Math.sign(z)]));
+  });
+  group.add(mesh(new THREE.TorusGeometry(0.27, 0.022, 12, 64), mouth, [2.49, 1.28, 0], [0, Math.PI / 2, 0], [1, 0.72, 1]));
+  group.add(mesh(new THREE.TorusGeometry(0.12, 0.012, 8, 32), spot, [2.52, 1.41, -0.12], [0, Math.PI / 2, 0], [1, 0.75, 1]));
+  group.add(mesh(new THREE.TorusGeometry(0.12, 0.012, 8, 32), spot, [2.52, 1.41, 0.12], [0, Math.PI / 2, 0], [1, 0.75, 1]));
   group.add(mesh(new THREE.ConeGeometry(0.12, 0.42, 18), materials.brass, [1.58, 2.15, -0.34], [0.18, 0.15, -0.18]));
   group.add(mesh(new THREE.ConeGeometry(0.12, 0.42, 18), materials.brass, [1.58, 2.15, 0.34], [0.18, -0.15, 0.18]));
   group.add(mesh(new THREE.SphereGeometry(0.18, 20, 10), pink, [1.36, 1.82, -0.55], [0, 0.1, 0], [0.72, 0.28, 0.5]));
@@ -639,8 +644,18 @@ function createCowToy() {
     [-0.2, 1.05, -0.62, 0.28, 0.18],
     [0.62, 1.42, 0.55, 0.32, 0.2],
     [0.82, 0.95, -0.34, 0.24, 0.16],
-    [-1.2, 1.22, -0.22, 0.3, 0.18]
-  ].forEach(([x, y, z, sx, sy]) => group.add(mesh(new THREE.SphereGeometry(1, 24, 12), spot, [x, y, z], [0, 0, 0], [sx, sy, 0.035])));
+    [-1.2, 1.22, -0.22, 0.3, 0.18],
+    [-1.0, 1.72, 0.38, 0.22, 0.14],
+    [0.16, 1.78, -0.48, 0.2, 0.13],
+    [1.2, 1.48, 0.42, 0.21, 0.14],
+    [1.38, 1.92, -0.16, 0.18, 0.12],
+    [1.95, 1.98, 0.44, 0.16, 0.1],
+    [1.82, 1.24, -0.48, 0.17, 0.11],
+    [0.38, 0.82, 0.64, 0.16, 0.1],
+    [-1.42, 0.96, 0.46, 0.2, 0.12]
+  ].forEach(([x, y, z, sx, sy], index) =>
+    group.add(mesh(new THREE.SphereGeometry(1, 24, 12), spot, [x, y, z], [0, index * 0.23, index * 0.19], [sx, sy, 0.035]))
+  );
   [-0.85, 0.85].forEach((x) => [-0.55, 0.55].forEach((z) => {
     group.add(mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.72, 24), materials.coral, [x, 0.55, z], [0.08 * x, 0, 0.04 * z]));
     group.add(mesh(new THREE.SphereGeometry(0.22, 20, 10), mouth, [x, 0.18, z], [0, 0, 0], [1.0, 0.36, 0.74]));
@@ -895,20 +910,69 @@ function showPdfPaper(plan) {
 function updateProjectAssets(room) {
   if (activeAssetRoomId === room.id) return;
   activeAssetRoomId = room.id;
-  const plans = projectPlans[room.id] || [];
+  let plans = projectPlans[room.id] || [];
+  if (room.id === "chair") {
+    const order = planDeckOrder.get(room.id) || plans.map((_, index) => index);
+    plans = order.map((index) => projectPlans[room.id][index]).filter(Boolean);
+  }
   planTray.innerHTML = "";
   planTray.classList.remove("center-stage");
+  planTray.classList.toggle("deck-gallery", room.id === "chair");
   planTray.classList.toggle("visible", plans.length > 0);
   plans.forEach((plan, index) => {
     const button = document.createElement("button");
     button.className = "plan-card";
     button.type = "button";
     button.style.setProperty("--stack-index", index);
+    button.style.setProperty("--deck-total", plans.length);
     button.innerHTML = `
       <span>${plan.title}</span>
       <img src="${plan.image}" alt="${plan.title}" />
     `;
-    button.addEventListener("click", () => showPdfPaper(plan));
+    let dragStart = null;
+    let dragged = false;
+    button.addEventListener("pointerdown", (event) => {
+      if (room.id !== "chair") return;
+      dragStart = { x: event.clientX, y: event.clientY };
+      dragged = false;
+      button.setPointerCapture?.(event.pointerId);
+      button.classList.add("dragging");
+    });
+    button.addEventListener("pointermove", (event) => {
+      if (!dragStart) return;
+      const dx = event.clientX - dragStart.x;
+      const dy = event.clientY - dragStart.y;
+      if (Math.hypot(dx, dy) < 8) return;
+      dragged = true;
+      button.style.setProperty("--drag-x", `${dx}px`);
+      button.style.setProperty("--drag-y", `${dy}px`);
+    });
+    const finishDrag = (event) => {
+      if (!dragStart) return;
+      button.releasePointerCapture?.(event.pointerId);
+      button.classList.remove("dragging");
+      button.style.removeProperty("--drag-x");
+      button.style.removeProperty("--drag-y");
+      const dx = event.clientX - dragStart.x;
+      const dy = event.clientY - dragStart.y;
+      dragStart = null;
+      if (!dragged || Math.hypot(dx, dy) < 34) return;
+      const currentOrder = planDeckOrder.get(room.id) || projectPlans[room.id].map((_, planIndex) => planIndex);
+      if (dx < -28 || dy < -28) currentOrder.push(currentOrder.shift());
+      if (dx > 28 || dy > 28) currentOrder.unshift(currentOrder.pop());
+      planDeckOrder.set(room.id, currentOrder);
+      activeAssetRoomId = null;
+      updateProjectAssets(room);
+    };
+    button.addEventListener("pointerup", finishDrag);
+    button.addEventListener("pointercancel", finishDrag);
+    button.addEventListener("click", (event) => {
+      if (dragged) {
+        event.preventDefault();
+        return;
+      }
+      showPdfPaper(plan);
+    });
     planTray.appendChild(button);
   });
 

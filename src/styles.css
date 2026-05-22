@@ -326,6 +326,14 @@ h1 {
     transform 240ms ease;
 }
 
+.plan-tray.deck-gallery {
+  top: 86px;
+  right: 20px;
+  width: min(340px, 23vw);
+  min-width: 250px;
+  gap: 10px;
+}
+
 .plan-tray.visible {
   pointer-events: auto;
   opacity: 1;
@@ -364,10 +372,42 @@ h1 {
     box-shadow 220ms ease;
 }
 
+.plan-tray.deck-gallery .plan-card {
+  width: 100%;
+  height: clamp(76px, 8.8vh, 118px);
+  margin-top: 0;
+  touch-action: none;
+  transform:
+    translate(var(--drag-x, 0), var(--drag-y, 0))
+    translateX(calc((var(--stack-index) - 2) * 6px))
+    rotate(calc((var(--stack-index) - 2) * -0.85deg));
+}
+
+.plan-tray.deck-gallery .plan-card:first-child {
+  height: clamp(118px, 15vh, 174px);
+}
+
+.plan-tray.deck-gallery .plan-card.dragging {
+  z-index: 8;
+  opacity: 0.94;
+  box-shadow: 0 26px 72px rgba(55, 80, 75, 0.3);
+  transition: box-shadow 160ms ease;
+}
+
 .plan-card:hover {
   z-index: 3;
   transform: translateY(calc(var(--stack-index) * 8px - 6px)) scale(1.03);
   box-shadow: 0 22px 60px rgba(55, 80, 75, 0.24);
+}
+
+.plan-tray.deck-gallery .plan-card:hover {
+  z-index: 4;
+  transform:
+    translate(var(--drag-x, 0), var(--drag-y, 0))
+    translateX(calc((var(--stack-index) - 2) * 6px))
+    translateY(-3px)
+    scale(1.015)
+    rotate(calc((var(--stack-index) - 2) * -0.85deg));
 }
 
 .plan-tray.center-stage .plan-card {
@@ -615,9 +655,24 @@ h1 {
     width: 148px;
   }
 
+  .plan-tray.deck-gallery {
+    top: 72px;
+    width: min(190px, 45vw);
+    min-width: 152px;
+    gap: 7px;
+  }
+
   .plan-card {
     width: 148px;
     height: 100px;
+  }
+
+  .plan-tray.deck-gallery .plan-card {
+    height: 68px;
+  }
+
+  .plan-tray.deck-gallery .plan-card:first-child {
+    height: 98px;
   }
 
   .pdf-stage {
