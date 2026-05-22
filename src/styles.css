@@ -557,18 +557,24 @@ h1 {
   left: 50%;
   bottom: 16px;
   display: flex;
-  width: min(1320px, calc(100vw - 32px));
-  gap: clamp(5px, 0.8vw, 8px);
-  flex-wrap: wrap;
+  width: min(1680px, calc(100vw - 32px));
+  gap: clamp(4px, 0.55vw, 8px);
+  flex-wrap: nowrap;
   justify-content: center;
   transform: translateX(-50%);
   pointer-events: auto;
-  overflow: visible;
-  padding: clamp(5px, 0.9vw, 8px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: clamp(4px, 0.65vw, 8px);
   border: 1px solid rgba(34, 48, 41, 0.16);
   border-radius: 8px;
   background: rgba(255, 255, 248, 0.7);
   backdrop-filter: blur(18px);
+  scrollbar-width: none;
+}
+
+.map::-webkit-scrollbar {
+  display: none;
 }
 
 .map button,
@@ -587,11 +593,14 @@ h1 {
 }
 
 .map button {
-  flex: 1 1 clamp(82px, 10vw, 112px);
-  min-width: clamp(72px, 9vw, 98px);
-  max-width: 178px;
-  padding: clamp(8px, 1.1vw, 10px) clamp(8px, 1.2vw, 12px);
-  font-size: clamp(0.68rem, 1.35vw, 0.8rem);
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 162px;
+  min-height: clamp(34px, 4.6vw, 44px);
+  padding: clamp(5px, 0.78vw, 9px) clamp(5px, 0.9vw, 11px);
+  font-size: clamp(0.56rem, 1.08vw, 0.78rem);
+  line-height: 1.05;
+  white-space: normal;
 }
 
 .map button:hover,
@@ -956,7 +965,7 @@ h1 {
   .map {
     bottom: 8px;
     width: calc(100vw - 12px);
-    max-height: 78px;
+    max-height: 58px;
     justify-content: flex-start;
     overflow-x: auto;
     overflow-y: hidden;
@@ -970,10 +979,12 @@ h1 {
   }
 
   .map button {
-    flex: 0 0 auto;
-    min-width: 84px;
-    max-width: 112px;
-    min-height: 44px;
+    flex: 0 0 clamp(66px, 15vw, 92px);
+    min-width: 0;
+    max-width: 92px;
+    min-height: 38px;
+    padding: 6px 7px;
+    font-size: 0.62rem;
     white-space: normal;
   }
 
