@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Marie-Chantal immersive 3D modeling portfolio for CAD, SolidWorks, Rhinoceros and Blender work."
+    />
+    <title>Marie-Chantal | 3D Modeling Portfolio</title>
+  </head>
+  <body>
+    <canvas id="world"></canvas>
+    <main id="interface">
+      <section class="titleplate">
+        <p class="eyebrow">Portfolio</p>
+        <p id="roomCopy">
+          Welcome to my portfolio of projects. Feel free to navigate between them by clicking the tabs
+          at the bottom of the screen.
+        </p>
+      </section>
+
+      <aside id="projectBadge" class="project-badge">Home</aside>
+
+      <aside class="panel">
+        <div>
+          <p class="label">Current room</p>
+          <h2 id="roomName">Home</h2>
+        </div>
+        <p id="roomDescription"></p>
+        <div class="meta-grid">
+          <span id="toolchain">CAD / SolidWorks / Rhino / Blender</span>
+        </div>
+      </aside>
+
+      <nav class="map" aria-label="Portfolio room map">
+        <button data-room="home" class="active">Home</button>
+        <button data-room="omniwheel">Omniwheel</button>
+        <button data-room="snowboard">Mountainboard</button>
+        <button data-room="tripod">Tripod</button>
+        <button data-room="chair">Swing</button>
+        <button data-room="lamp">Shelf</button>
+        <button data-room="shoe">Heating Bowl SI¹⁴</button>
+        <button data-room="hanger">Heating Sphere SI¹⁴</button>
+        <button data-room="cow">Cow Toy</button>
+        <button data-room="credits">Credits</button>
+      </nav>
+
+      <button id="enterWorld" class="enter">Enter first-person mode</button>
+      <aside id="planTray" class="plan-tray" aria-label="Project plans"></aside>
+      <section id="pdfStage" class="pdf-stage" aria-label="PDF project object"></section>
+      <div id="crosshair" aria-hidden="true"></div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

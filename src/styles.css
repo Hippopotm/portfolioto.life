@@ -1,0 +1,628 @@
+:root {
+  color-scheme: light;
+  --ink: #223029;
+  --muted: rgba(34, 48, 41, 0.74);
+  --glass: rgba(255, 255, 248, 0.66);
+  --line: rgba(51, 67, 57, 0.18);
+  --accent: #9f6f20;
+  --cyan: #257fa4;
+  --green: #337d56;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #dff6ff;
+  color: var(--ink);
+}
+
+button {
+  font: inherit;
+}
+
+#world {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+}
+
+#interface {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.titleplate {
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  width: min(520px, calc(100vw - 56px));
+  padding: 14px 16px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 8px;
+  background: rgba(255, 255, 248, 0.28);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 60px rgba(54, 74, 70, 0.08);
+  text-shadow: 0 2px 24px rgba(255, 255, 255, 0.4);
+}
+
+.eyebrow,
+.label {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  position: relative;
+  display: inline-block;
+  pointer-events: auto;
+  cursor: default;
+  transition:
+    color 180ms ease,
+    letter-spacing 220ms ease,
+    transform 220ms ease;
+}
+
+.eyebrow::after {
+  content: "click a tab to travel";
+  position: absolute;
+  left: 0;
+  top: calc(100% + 5px);
+  width: max-content;
+  padding: 5px 8px;
+  border: 1px solid rgba(34, 48, 41, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 248, 0.82);
+  color: rgba(34, 48, 41, 0.74);
+  font-size: 0.68rem;
+  letter-spacing: 0;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.eyebrow:hover {
+  color: var(--cyan);
+  letter-spacing: 0.28em;
+  transform: translateX(3px);
+}
+
+.eyebrow:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: clamp(2.65rem, 7vw, 6.9rem);
+  line-height: 0.88;
+  letter-spacing: 0;
+}
+
+.titleplate p:last-child {
+  max-width: 38rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.35vw, 1.08rem);
+  line-height: 1.55;
+}
+
+.panel {
+  position: absolute;
+  right: 24px;
+  bottom: 118px;
+  width: min(390px, calc(100vw - 48px));
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(255, 252, 236, 0.78), rgba(222, 246, 255, 0.58));
+  box-shadow: 0 28px 90px rgba(55, 80, 75, 0.18);
+  backdrop-filter: blur(18px);
+  transition:
+    opacity 420ms ease,
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.panel.panel-exit {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(130px);
+}
+
+.panel.panel-enter {
+  opacity: 0;
+  transform: translateX(170px);
+}
+
+.project-badge {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  max-width: min(360px, calc(100vw - 56px));
+  padding: 12px 15px;
+  border: 1px solid rgba(34, 48, 41, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 248, 0.58);
+  color: var(--ink);
+  font-size: clamp(0.95rem, 1.8vw, 1.35rem);
+  font-weight: 850;
+  line-height: 1.08;
+  text-align: right;
+  text-wrap: balance;
+  box-shadow: 0 18px 60px rgba(54, 74, 70, 0.1);
+  backdrop-filter: blur(16px);
+}
+
+#interface.home-active .project-badge {
+  display: none;
+}
+
+.project-badge.badge-swap {
+  animation: badgeSwap 560ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes badgeSwap {
+  0% {
+    opacity: 0;
+    transform: translateX(70px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+#interface.home-active .panel {
+  display: none;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+#roomDescription {
+  margin: 14px 0 16px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.meta-grid span {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(34, 48, 41, 0.13);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.48);
+  color: rgba(34, 48, 41, 0.84);
+  font-size: 0.82rem;
+}
+
+.map {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  display: flex;
+  width: min(1320px, calc(100vw - 32px));
+  gap: clamp(5px, 0.8vw, 8px);
+  flex-wrap: wrap;
+  justify-content: center;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  overflow: visible;
+  padding: clamp(5px, 0.9vw, 8px);
+  border: 1px solid rgba(34, 48, 41, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 248, 0.7);
+  backdrop-filter: blur(18px);
+}
+
+.map button,
+.enter {
+  flex: 0 0 auto;
+  border: 1px solid rgba(34, 48, 41, 0.16);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.map button {
+  flex: 1 1 clamp(82px, 10vw, 112px);
+  min-width: clamp(72px, 9vw, 98px);
+  max-width: 178px;
+  padding: clamp(8px, 1.1vw, 10px) clamp(8px, 1.2vw, 12px);
+  font-size: clamp(0.68rem, 1.35vw, 0.8rem);
+}
+
+.map button:hover,
+.enter:hover {
+  transform: translateY(-1px);
+  border-color: rgba(37, 127, 164, 0.36);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.map button.active {
+  border-color: rgba(159, 111, 32, 0.74);
+  background: rgba(243, 201, 105, 0.34);
+  color: #4a3212;
+}
+
+.controls {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  max-width: min(500px, calc(100vw - 48px));
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+
+.controls span {
+  padding: 8px 10px;
+  border: 1px solid rgba(34, 48, 41, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 248, 0.64);
+  color: rgba(34, 48, 41, 0.72);
+  font-size: 0.75rem;
+  backdrop-filter: blur(10px);
+}
+
+.enter {
+  position: absolute;
+  left: 28px;
+  bottom: 118px;
+  padding: 13px 16px;
+  pointer-events: auto;
+  background: rgba(37, 127, 164, 0.12);
+  border-color: rgba(37, 127, 164, 0.42);
+}
+
+.plan-tray {
+  position: absolute;
+  top: 92px;
+  right: 24px;
+  display: grid;
+  gap: 0;
+  width: 188px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+
+.plan-tray.visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.plan-tray.center-stage {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: min(620px, calc(100vw - 420px));
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+.plan-tray.center-stage.visible {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.plan-card {
+  position: relative;
+  width: 188px;
+  height: 122px;
+  margin-top: calc(var(--stack-index) * -72px);
+  overflow: hidden;
+  border: 1px solid rgba(34, 48, 41, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 248, 0.86);
+  box-shadow: 0 14px 40px rgba(55, 80, 75, 0.18);
+  color: var(--ink);
+  cursor: pointer;
+  transform: translateY(calc(var(--stack-index) * 8px)) rotate(calc((var(--stack-index) - 1.5) * -1.4deg));
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.plan-card:hover {
+  z-index: 3;
+  transform: translateY(calc(var(--stack-index) * 8px - 6px)) scale(1.03);
+  box-shadow: 0 22px 60px rgba(55, 80, 75, 0.24);
+}
+
+.plan-tray.center-stage .plan-card {
+  width: 100%;
+  height: 210px;
+  margin-top: 0;
+  transform: none;
+}
+
+.plan-tray.center-stage .plan-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.plan-card span {
+  position: absolute;
+  z-index: 1;
+  left: 8px;
+  right: 8px;
+  bottom: 7px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 248, 0.82);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+.plan-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.pdf-stage {
+  position: absolute;
+  left: 46%;
+  top: 50%;
+  z-index: 5;
+  display: block;
+  width: min(760px, calc(100vw - 510px));
+  height: min(620px, calc(100vh - 190px));
+  min-width: 360px;
+  overflow: hidden;
+  border: 1px solid rgba(34, 48, 41, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 248, 0.94);
+  box-shadow:
+    0 30px 90px rgba(55, 80, 75, 0.22),
+    12px 18px 0 rgba(214, 170, 85, 0.18);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) perspective(900px) rotateX(4deg) rotateY(-5deg) scale(0.86);
+  transform-origin: center;
+  transition:
+    opacity 260ms ease,
+    transform 320ms ease;
+}
+
+.pdf-stage.visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translate(-50%, -50%) perspective(900px) rotateX(0deg) rotateY(-3deg) scale(1);
+}
+
+.pdf-stage.large-paper {
+  left: 50%;
+  width: min(1040px, calc(100vw - 96px));
+  height: min(760px, calc(100vh - 150px));
+}
+
+.pdf-stage-title {
+  display: flex;
+  height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px 9px 14px;
+  border-bottom: 1px solid rgba(34, 48, 41, 0.12);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.pdf-paper-close {
+  padding: 7px 10px;
+  border: 1px solid rgba(34, 48, 41, 0.18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 0.76rem;
+}
+
+.pdf-paper-viewport {
+  width: 100%;
+  height: calc(100% - 42px);
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(34, 48, 41, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(34, 48, 41, 0.04) 1px, transparent 1px),
+    #fff;
+  background-size: 28px 28px;
+  cursor: grab;
+}
+
+.pdf-paper-viewport:active {
+  cursor: grabbing;
+}
+
+.pdf-paper-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: center;
+  transition: transform 60ms linear;
+  user-select: none;
+  pointer-events: none;
+}
+
+#crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+}
+
+#crosshair::before,
+#crosshair::after {
+  content: "";
+  position: absolute;
+  background: rgba(34, 48, 41, 0.8);
+}
+
+#crosshair::before {
+  left: 8px;
+  top: 2px;
+  width: 2px;
+  height: 14px;
+}
+
+#crosshair::after {
+  left: 2px;
+  top: 8px;
+  width: 14px;
+  height: 2px;
+}
+
+@media (max-width: 760px) {
+  .titleplate {
+    top: 10px;
+    left: 10px;
+    width: min(58vw, 330px);
+    padding: 10px 11px;
+  }
+
+  .eyebrow,
+  .label {
+    margin-bottom: 5px;
+    font-size: 0.58rem;
+  }
+
+  .titleplate p:last-child {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    max-height: 5.4rem;
+    overflow: hidden;
+  }
+
+  .controls {
+    display: none;
+  }
+
+  .project-badge {
+    top: 10px;
+    right: 10px;
+    max-width: 38vw;
+    padding: 9px 10px;
+    font-size: 0.86rem;
+  }
+
+  .panel {
+    right: 10px;
+    bottom: 92px;
+    width: min(330px, calc(100vw - 20px));
+    max-height: 32vh;
+    overflow: auto;
+    padding: 10px;
+  }
+
+  .panel h2 {
+    font-size: 1.05rem;
+  }
+
+  #roomDescription {
+    margin: 8px 0 10px;
+    font-size: 0.78rem;
+    line-height: 1.32;
+  }
+
+  .meta-grid span {
+    padding: 7px 8px;
+    font-size: 0.68rem;
+  }
+
+  .enter {
+    left: 10px;
+    bottom: 92px;
+    max-width: 42vw;
+    padding: 10px 11px;
+    font-size: 0.75rem;
+  }
+
+  .map {
+    bottom: 8px;
+    width: calc(100vw - 12px);
+    max-height: 78px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .map::-webkit-scrollbar {
+    display: none;
+  }
+
+  .map button {
+    flex: 0 0 auto;
+    min-width: 84px;
+    max-width: 112px;
+    min-height: 44px;
+    white-space: normal;
+  }
+
+  .plan-tray {
+    top: 76px;
+    right: 12px;
+    width: 148px;
+  }
+
+  .plan-card {
+    width: 148px;
+    height: 100px;
+  }
+
+  .pdf-stage {
+    width: calc(100vw - 24px);
+    min-width: 0;
+    height: calc(100vh - 210px);
+  }
+}
