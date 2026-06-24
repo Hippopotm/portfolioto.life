@@ -4,6 +4,7 @@ import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { STLLoader } from "three/addons/loaders/STLLoader.js";
+import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 
 const canvas = document.querySelector("#world");
 const interfaceLayer = document.querySelector("#interface");
@@ -45,6 +46,7 @@ const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(assetUrl("/draco/"));
 gltfLoader.setDRACOLoader(dracoLoader);
 const stlLoader = new STLLoader();
+const threeMFLoader = new ThreeMFLoader();
 
 const materials = {
   floor: new THREE.MeshStandardMaterial({ color: 0xd7d7c5, roughness: 0.72, metalness: 0.03 }),
@@ -116,7 +118,7 @@ const rooms = [
   {
     id: "chair",
     name: "Swing",
-    position: [88, 0],
+    position: [0, -22],
     color: 0xff8f6a,
     tools: "Paint 3D / architectural model / children's play scale",
     description:
@@ -127,7 +129,7 @@ const rooms = [
   {
     id: "lamp",
     name: "Shelf",
-    position: [0, -22],
+    position: [22, -22],
     color: 0xa8efb3,
     tools: "SolidWorks / resistance testing / reused metal build",
     description:
@@ -138,7 +140,7 @@ const rooms = [
   {
     id: "shoe",
     name: "Heating Bowl SI¹⁴",
-    position: [22, -22],
+    position: [44, -22],
     color: 0x68d5ff,
     tools: "Solid Edge / beach-harvested clay / physical testing",
     description:
@@ -149,7 +151,7 @@ const rooms = [
   {
     id: "hanger",
     name: "Heating Sphere SI¹⁴",
-    position: [44, -22],
+    position: [66, -22],
     color: 0xf3c969,
     tools: "Solid Edge / clay 3D-print prototype concept",
     description:
@@ -160,7 +162,7 @@ const rooms = [
   {
     id: "cow",
     name: "Cow Toy for Kids",
-    position: [66, -22],
+    position: [0, -44],
     color: 0xfff2b5,
     tools: "Paint 3D",
     description: "Made simply with Paint 3D.",
@@ -170,11 +172,33 @@ const rooms = [
   {
     id: "credits",
     name: "About me",
-    position: [88, -22],
+    position: [66, -44],
     color: 0xffffff,
     tools: "",
     description: "",
     copy: "A little more about me"
+  },
+  {
+    id: "evlight",
+    name: "Light Controller",
+    position: [22, -44],
+    color: 0x58d6ff,
+    tools: "LTspice / BJT switching / op-amp feedback / circuit sizing",
+    description:
+      "Work focused on LTspice circuit interpretation, BJT switching, diode protection, op-amp feedback modes, and resistor sizing from current and saturation constraints. The project connects simulation evidence with hand calculations to justify safe LED drive behavior.",
+    copy:
+      "An electric-vehicle light-control study built around feedback and switching logic. The project studies how a low-current sensor signal can drive a lighting output through transistor switching and op-amp behavior, while keeping current, saturation, and component protection under control."
+  },
+  {
+    id: "servocontrol",
+    name: "Servo Control",
+    position: [44, -44],
+    color: 0xb59cff,
+    tools: "LTspice / servo-control / circuit analysis / motor-drive simulation",
+    description:
+      "Built through LTspice probing, nodal and mesh equations, equivalent-circuit analysis, diode bridge simulation, and motor-drive reasoning. The report connects simulation results to Arduino-style prototyping and transistor amplification for higher motor speed.",
+    copy:
+      "A servo-control electronics project translating circuit laws, LTspice waveforms, and simulated motor-driving behavior into a practical control chain. The work shows the path from measurement and equations to a stronger motor-control circuit."
   }
 ];
 
@@ -198,6 +222,20 @@ const projectPlans = {
     { title: "Dimension view 1", url: assetUrl("/visuals/swing-dimensions-1.png"), image: assetUrl("/visuals/swing-dimensions-1.png") },
     { title: "Dimension view 2", url: assetUrl("/visuals/swing-dimensions-2.png"), image: assetUrl("/visuals/swing-dimensions-2.png") },
     { title: "Dimension view 3", url: assetUrl("/visuals/swing-dimensions-3.png"), image: assetUrl("/visuals/swing-dimensions-3.png") }
+  ],
+  evlight: [
+    {
+      title: "EV light-control project brief",
+      url: assetUrl("/plans/ev-light-feedback.pdf"),
+      image: assetUrl("/plan-previews/ev-light-feedback.png")
+    }
+  ],
+  servocontrol: [
+    {
+      title: "Servo-control report",
+      url: assetUrl("/plans/servo-control-ltspice.pdf"),
+      image: assetUrl("/plan-previews/servo-control-ltspice.png")
+    }
   ]
 };
 
@@ -211,7 +249,9 @@ const roomStyles = {
   shoe: { wall: 0xd7edf7, floor: 0xf4efe6, accent: 0x68d5ff, mood: "kitchen" },
   hanger: { wall: 0xf1dfc1, floor: 0xead7b3, accent: 0xf3c969, mood: "warm" },
   cow: { wall: 0xfff0bf, floor: 0xf7dfad, accent: 0xff8f6a, mood: "play" },
-  credits: { wall: 0xe9e9e5, floor: 0xd7ded8, accent: 0xffffff, mood: "archive" }
+  credits: { wall: 0xe9e9e5, floor: 0xd7ded8, accent: 0xffffff, mood: "archive" },
+  evlight: { wall: 0xd6f4ff, floor: 0xe6edf1, accent: 0x58d6ff, mood: "lab" },
+  servocontrol: { wall: 0xe5dcff, floor: 0xebe6f4, accent: 0xb59cff, mood: "control" }
 };
 
 const pdfRooms = {
@@ -251,6 +291,16 @@ const modelTransforms = {
     rotation: [0, 0, 0],
     scale: 3.2,
     lift: 0.72
+  },
+  evlight: {
+    rotation: [-Math.PI / 2, 0.42, 0],
+    scale: 4.2,
+    lift: 1.12
+  },
+  servocontrol: {
+    rotation: [-Math.PI / 2, 0.42, 0],
+    scale: 4.2,
+    lift: 1.12
   }
 };
 
@@ -264,7 +314,7 @@ const loadedModels = new Set();
 const loadingModels = new Map();
 const loadedPreviews = new Set();
 const loadingPreviews = new Map();
-const externalModelRooms = ["home", "omniwheel", "snowboard", "chair", "hanger"];
+const externalModelRooms = ["home", "omniwheel", "snowboard", "chair", "hanger", "evlight", "servocontrol"];
 const deferredModelRooms = new Set(["shoe", "tripod"]);
 const previewModelRooms = new Set(["shoe", "tripod"]);
 const roomSize = 18;
@@ -426,6 +476,16 @@ function addRoomDecor(group, room, style) {
     });
   } else if (style.mood === "archive") {
     [-4.6, -2.6, -0.6, 1.4, 3.4, 5.4].forEach((x, i) => addLocalBox(group, [1.2, 1.7, 0.08], i % 2 ? 0xf4f0df : 0xd0d7d2, [x, 3.05, -8.7]));
+  } else if (style.mood === "lab") {
+    addLocalBox(group, [6.4, 2.5, 0.09], 0x12202b, [3.6, 3.1, -8.7], [0, 0, 0], 0.7);
+    [0.7, 1.4, 2.1, 2.8, 3.5].forEach((y, i) => addLocalBox(group, [4.8, 0.055, 0.1], i % 2 ? 0x58d6ff : 0xffffff, [3.6, y, -8.58], [0, 0, 0], 0.62));
+    addLocalBox(group, [3.6, 0.12, 0.09], accent, [-4.9, 4.3, 8.76], [0, 0, 0.18], 0.78);
+  } else if (style.mood === "control") {
+    [-4.5, -1.5, 1.5, 4.5].forEach((x, i) => {
+      addLocalBox(group, [1.35, 1.35, 0.08], i % 2 ? 0xf6f0ff : accent, [x, 3.35, -8.7], [0, 0, i % 2 ? 0.18 : -0.18], 0.72);
+    });
+    addLocalBox(group, [5.4, 0.18, 0.08], 0x2f2750, [0, 2.05, 8.76], [0, 0, 0], 0.62);
+    [0, 1.4, 2.8].forEach((x) => addLocalSphere(group, 0.22, accent, [-2.8 + x, 2.42, 8.65], 0.9));
   }
 }
 
@@ -535,13 +595,13 @@ function createCloud(position, scale = 1, speed = 0.16) {
 ].forEach(([position, scale, speed]) => createCloud(position, scale, speed));
 
 const galleryRuns = [
-  { position: [44, -0.22, 0], size: [108, 0.28, 6.2] },
-  { position: [44, -0.22, -22], size: [108, 0.28, 6.2] },
-  { position: [0, -0.21, -11], size: [6.2, 0.3, 26] },
-  { position: [22, -0.21, -11], size: [6.2, 0.3, 26] },
-  { position: [44, -0.21, -11], size: [6.2, 0.3, 26] },
-  { position: [66, -0.21, -11], size: [6.2, 0.3, 26] },
-  { position: [88, -0.21, -11], size: [6.2, 0.3, 26] }
+  { position: [33, -0.22, 0], size: [86, 0.28, 6.2] },
+  { position: [33, -0.22, -22], size: [86, 0.28, 6.2] },
+  { position: [33, -0.22, -44], size: [86, 0.28, 6.2] },
+  { position: [0, -0.21, -22], size: [6.2, 0.3, 50] },
+  { position: [22, -0.21, -22], size: [6.2, 0.3, 50] },
+  { position: [44, -0.21, -22], size: [6.2, 0.3, 50] },
+  { position: [66, -0.21, -22], size: [6.2, 0.3, 50] }
 ];
 
 galleryRuns.forEach(({ position, size }) => {
@@ -716,6 +776,43 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
     }
   }
 
+  const threeMfUrls = {
+    evlight: assetUrl("/models/light-controller.3mf"),
+    servocontrol: assetUrl("/models/servo-controller.3mf")
+  };
+  if (threeMfUrls[roomId]) {
+    try {
+      const imported = await threeMFLoader.loadAsync(threeMfUrls[roomId]);
+      const box = new THREE.Box3().setFromObject(imported);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+      const transform = modelTransforms[roomId] || {};
+      imported.position.sub(center);
+      imported.scale.setScalar((transform.scale || 4.2) / maxAxis);
+      if (transform.rotation) imported.rotation.set(...transform.rotation);
+      imported.updateMatrixWorld(true);
+      const fittedBox = new THREE.Box3().setFromObject(imported);
+      const fittedCenter = fittedBox.getCenter(new THREE.Vector3());
+      imported.position.sub(fittedCenter);
+      imported.updateMatrixWorld(true);
+      fittedBox.setFromObject(imported);
+      targetGroup.position.y = (transform.lift || 0.45) - fittedBox.min.y;
+      targetGroup.userData.baseY = targetGroup.position.y;
+      imported.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      targetGroup.clear();
+      targetGroup.add(imported);
+      return;
+    } catch (error) {
+      console.info(`No external 3MF loaded for ${roomId}.`);
+    }
+  }
+
   const modelUrls = {
     home: assetUrl("/models/welcome.glb"),
     snowboard: assetUrl("/models/snowboard.gltf"),
@@ -805,6 +902,77 @@ async function preloadExternalModels() {
   }
 }
 
+function createWaveformMesh(color, amplitude = 0.34, length = 5.4) {
+  const points = [];
+  for (let i = 0; i <= 72; i++) {
+    const x = -length / 2 + (length * i) / 72;
+    const y = Math.sin(i * 0.34) * amplitude;
+    points.push(new THREE.Vector3(x, y, 0));
+  }
+  const curve = new THREE.CatmullRomCurve3(points);
+  return mesh(
+    new THREE.TubeGeometry(curve, 96, 0.035, 8, false),
+    new THREE.MeshBasicMaterial({ color }),
+    [0, 0, 0]
+  );
+}
+
+function createCircuitBoard(accent, label) {
+  const group = new THREE.Group();
+  const boardMat = new THREE.MeshStandardMaterial({ color: 0x102b32, roughness: 0.42, metalness: 0.22 });
+  const copperMat = new THREE.MeshStandardMaterial({ color: accent, roughness: 0.25, metalness: 0.45 });
+  const ceramicMat = new THREE.MeshStandardMaterial({ color: 0xf6f0df, roughness: 0.68, metalness: 0.04 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x15191d, roughness: 0.5, metalness: 0.2 });
+
+  group.add(mesh(new THREE.BoxGeometry(5.8, 0.18, 3.3), boardMat, [0, 0.9, 0]));
+  [-2.25, -1.05, 0.15, 1.35, 2.35].forEach((x, i) => {
+    group.add(mesh(new THREE.BoxGeometry(0.08, 0.05, 2.45), copperMat, [x, 1.03, 0], [0, 0, 0], [1, 1, i % 2 ? 0.72 : 1]));
+  });
+  [-1.5, 0.45, 1.85].forEach((x, i) => {
+    group.add(mesh(new THREE.BoxGeometry(1.1, 0.06, 0.08), copperMat, [x, 1.07, -0.72 + i * 0.72]));
+  });
+
+  group.add(mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.86, 28), ceramicMat, [-1.95, 1.35, 0.78], [Math.PI / 2, 0, 0]));
+  group.add(mesh(new THREE.BoxGeometry(1.0, 0.46, 0.75), darkMat, [0.15, 1.35, 0.05]));
+  group.add(mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.8, 24), materials.brass, [1.72, 1.32, -0.7], [0, 0, Math.PI / 2]));
+  group.add(mesh(new THREE.ConeGeometry(0.28, 0.58, 32), new THREE.MeshStandardMaterial({ color: 0xfff3a5, roughness: 0.28, metalness: 0.2 }), [2.35, 1.38, 0.58], [Math.PI / 2, 0, 0]));
+
+  const waveform = createWaveformMesh(accent, 0.22, 4.8);
+  waveform.position.set(0.05, 2.2, -1.92);
+  group.add(waveform);
+
+  const tag = makeTextSprite(label, accent);
+  tag.position.set(0, 2.95, 0);
+  tag.scale.set(3.4, 0.86, 1);
+  group.add(tag);
+  return group;
+}
+
+function createEVLightControl() {
+  const group = createCircuitBoard(0x58d6ff, "Light Controller");
+  const loopMat = new THREE.MeshBasicMaterial({ color: 0x84f7ff, transparent: true, opacity: 0.78 });
+  const feedback = mesh(new THREE.TorusGeometry(1.85, 0.035, 10, 96), loopMat, [0.08, 1.42, 0.12], [Math.PI / 2, 0, 0]);
+  group.add(feedback);
+  group.add(mesh(new THREE.BoxGeometry(0.7, 0.38, 0.52), materials.blue, [-2.55, 1.32, -0.62]));
+  group.add(mesh(new THREE.BoxGeometry(0.72, 0.38, 0.52), materials.green, [2.55, 1.32, -0.62]));
+  return group;
+}
+
+function createServoControlExhibit() {
+  const group = createCircuitBoard(0xb59cff, "Servo Control");
+  const motorMat = new THREE.MeshStandardMaterial({ color: 0xd8d8df, roughness: 0.35, metalness: 0.42 });
+  const shaftMat = new THREE.MeshStandardMaterial({ color: 0x503f89, roughness: 0.24, metalness: 0.62 });
+  const motor = mesh(new THREE.CylinderGeometry(0.72, 0.72, 1.1, 44), motorMat, [2.35, 1.45, 0.86], [Math.PI / 2, 0, 0]);
+  group.add(motor);
+  group.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 1.0, 20), shaftMat, [2.35, 1.45, 1.58], [Math.PI / 2, 0, 0]));
+  for (let i = 0; i < 3; i++) {
+    group.add(mesh(new THREE.BoxGeometry(0.16, 0.05, 0.88), shaftMat, [2.35, 1.45, 2.08], [0, 0, (Math.PI * 2 * i) / 3]));
+  }
+  const controlLoop = mesh(new THREE.TorusGeometry(1.25, 0.035, 10, 96), new THREE.MeshBasicMaterial({ color: 0xd8caff, transparent: true, opacity: 0.75 }), [-1.05, 1.42, 0.48], [Math.PI / 2, 0, 0]);
+  group.add(controlLoop);
+  return group;
+}
+
 const modelFactories = {
   omniwheel: () => new THREE.Group(),
   snowboard: () => new THREE.Group(),
@@ -814,7 +982,9 @@ const modelFactories = {
   shoe: () => new THREE.Group(),
   hanger: () => new THREE.Group(),
   cow: createCowToy,
-  credits: createCreditsSculpture
+  credits: createCreditsSculpture,
+  evlight: () => new THREE.Group(),
+  servocontrol: () => new THREE.Group()
 };
 
 rooms.forEach((room) => {
@@ -1033,7 +1203,7 @@ async function startRoomTransition(id) {
   const [x, z] = room.position;
   const [activeX, activeZ] = activeRoom.position;
   const start = new THREE.Vector3(player.position.x, Math.max(player.position.y, 2.2), player.position.z);
-  const mapCenter = new THREE.Vector3(44, 0, -11);
+  const mapCenter = new THREE.Vector3(33, 0, -22);
   const startLook = new THREE.Vector3(activeX, 2.2, activeZ);
   const overview = new THREE.Vector3(mapCenter.x, 78, mapCenter.z + 2);
   const targetOverview = new THREE.Vector3(x, 50, z + 1.5);
