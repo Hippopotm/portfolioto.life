@@ -78,7 +78,7 @@ const rooms = [
     color: 0x89e7ff,
     tools: "CAD / SolidWorks / Rhino / Blender",
     description:
-      "A calm welcome room for Marie-Chantal's portfolio, with floating 3D lettering and direct access to each project room.",
+      "A calm welcome room for Leslie's portfolio, with floating 3D lettering and direct access to each project room.",
     copy:
       "Welcome to my portfolio of projects. Feel free to navigate between them by clicking the tabs at the bottom of the screen."
   },
