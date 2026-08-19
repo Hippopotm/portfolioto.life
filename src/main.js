@@ -3,7 +3,6 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { STLLoader } from "three/addons/loaders/STLLoader.js";
 import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 
 const canvas = document.querySelector("#world");
@@ -45,7 +44,6 @@ const gltfLoader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(assetUrl("/draco/"));
 gltfLoader.setDRACOLoader(dracoLoader);
-const stlLoader = new STLLoader();
 const threeMFLoader = new ThreeMFLoader();
 
 const materials = {
@@ -745,12 +743,8 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
 
   if (roomId === "omniwheel") {
     try {
-      const geometry = await stlLoader.loadAsync(assetUrl("/models/omniwheel-vehicle.stl"));
-      geometry.computeVertexNormals();
-      const imported = new THREE.Mesh(
-        geometry,
-        new THREE.MeshStandardMaterial({ color: 0xd9d7cb, roughness: 0.48, metalness: 0.32 })
-      );
+      const gltf = await gltfLoader.loadAsync(assetUrl("/models-web/omniwheel-vehicle-web.glb"));
+      const imported = gltf.scene;
       const box = new THREE.Box3().setFromObject(imported);
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
@@ -766,8 +760,12 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
       imported.updateMatrixWorld(true);
       fittedBox.setFromObject(imported);
       imported.position.y += 1.05 - fittedBox.min.y;
-      imported.castShadow = true;
-      imported.receiveShadow = true;
+      imported.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
       targetGroup.clear();
       targetGroup.add(imported);
       return;
@@ -814,12 +812,12 @@ async function loadActualModel(roomId, targetGroup, { preview = false } = {}) {
   }
 
   const modelUrls = {
-    home: assetUrl("/models/welcome.glb"),
-    snowboard: assetUrl("/models/snowboard.gltf"),
-    tripod: assetUrl("/models/tripod.glb"),
+    home: assetUrl("/models-web/welcome-web.glb"),
+    snowboard: assetUrl("/models-web/snowboard-web.glb"),
+    tripod: assetUrl("/models-web/tripod-web.glb"),
     chair: assetUrl("/models/swing.glb"),
-    shoe: assetUrl("/models/heating-bowl.glb"),
-    hanger: assetUrl("/models/heating-sphere.gltf")
+    shoe: assetUrl("/models-web/heating-bowl-web.glb"),
+    hanger: assetUrl("/models-web/heating-sphere-web.glb")
   };
   const previewModelUrls = {
     shoe: assetUrl("/models/heating-bowl-preview.glb"),
