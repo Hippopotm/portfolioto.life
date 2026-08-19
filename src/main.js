@@ -341,6 +341,23 @@ function isCompactLayout() {
 function getRoomView(room) {
   const [x, z] = room.position;
   const compact = isCompactLayout();
+  if (room.id === "home") {
+    const narrow = window.innerWidth < 560;
+    const short = window.innerHeight < 720;
+    const distance = narrow ? 9.2 : window.innerWidth < 900 ? 8.1 : 6.8;
+    const height = narrow ? 3.35 : short ? 3.05 : 2.65;
+    const playerPosition = new THREE.Vector3(x, height, z + distance);
+    const cameraPosition = playerPosition.clone().add(new THREE.Vector3(0, 0.62, 0));
+    const look = new THREE.Vector3(x, narrow ? 1.55 : 1.95, z);
+    const direction = look.clone().sub(cameraPosition).normalize();
+    return {
+      position: playerPosition,
+      cameraPosition,
+      look,
+      pitch: Math.asin(THREE.MathUtils.clamp(direction.y, -1, 1)),
+      fov: narrow ? 78 : window.innerWidth < 900 ? 72 : 66
+    };
+  }
   const playerPosition = new THREE.Vector3(x, compact ? 2.8 : 2.2, z + (compact ? 7.35 : 5.9));
   const cameraPosition = playerPosition.clone().add(new THREE.Vector3(0, 0.62, 0));
   const look = new THREE.Vector3(x, compact ? 1.35 : 2.82, z);

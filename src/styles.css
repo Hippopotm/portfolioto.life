@@ -131,6 +131,16 @@ h1 {
   line-height: 1.55;
 }
 
+#interface.home-active .titleplate {
+  width: min(680px, calc(100vw - 56px));
+}
+
+#interface.home-active .titleplate p:last-child {
+  max-width: 62ch;
+  font-size: clamp(0.96rem, 1.8vw, 1.18rem);
+  line-height: 1.48;
+}
+
 .panel {
   position: absolute;
   right: 24px;
@@ -967,6 +977,25 @@ h1 {
     line-height: 1.35;
     max-height: 5.4rem;
     overflow: hidden;
+  }
+
+  #interface.home-active .titleplate {
+    right: 10px;
+    width: auto;
+    max-width: none;
+    padding: 10px 11px 11px;
+  }
+
+  #interface.home-active .titleplate p:last-child {
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    font-size: clamp(0.74rem, 3.15vw, 0.92rem);
+    line-height: 1.32;
+  }
+
+  #interface.home-active .eyebrow::after {
+    display: none;
   }
 
   .controls {
