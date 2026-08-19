@@ -334,14 +334,14 @@ h1 {
 .linkedin-body {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 270px);
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    "main school"
-    "headline school"
-    "location school"
-    "connections school"
-    "actions actions";
-  gap: 12px 32px;
+    "main"
+    "headline"
+    "location"
+    "connections"
+    "actions";
+  gap: 12px;
   padding: clamp(70px, 8.4vh, 88px) 34px 24px;
 }
 
@@ -415,34 +415,6 @@ h1 {
   font-size: 1.08rem;
 }
 
-.linkedin-school {
-  grid-area: school;
-  display: flex;
-  align-items: start;
-  justify-self: end;
-  gap: 12px;
-  min-width: 0;
-  padding-top: 10px;
-  font-size: 1.12rem;
-}
-
-.howard-mark {
-  display: grid;
-  flex: 0 0 auto;
-  width: 52px;
-  height: 52px;
-  place-items: center;
-  border: 0;
-  border-radius: 6px;
-  background: #009999;
-  color: #ffffff;
-  font-size: 0.48rem;
-  font-weight: 800;
-  line-height: 1;
-  text-align: center;
-  text-transform: uppercase;
-}
-
 .linkedin-actions {
   grid-area: actions;
   display: flex;
@@ -483,7 +455,6 @@ h1 {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "main"
-      "school"
       "headline"
       "location"
       "connections"
@@ -495,10 +466,6 @@ h1 {
     flex-wrap: wrap;
   }
 
-  .linkedin-school {
-    justify-self: start;
-    padding-top: 0;
-  }
 }
 
 @media (max-height: 820px) and (min-width: 761px) {
@@ -1049,14 +1016,6 @@ h1 {
   .linkedin-pronouns {
     margin-top: 6px;
     font-size: 0.95rem;
-  }
-
-  .linkedin-school {
-    grid-column: auto;
-    grid-row: auto;
-    justify-self: start;
-    padding-top: 4px;
-    font-size: 0.98rem;
   }
 
   .linkedin-headline,
