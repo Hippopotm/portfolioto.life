@@ -340,19 +340,17 @@ function isCompactLayout() {
 
 function getRoomView(room) {
   const [x, z] = room.position;
-  if (isCompactLayout()) {
-    return {
-      position: new THREE.Vector3(x, 2.8, z + 7.35),
-      look: new THREE.Vector3(x, 1.35, z),
-      pitch: -0.18,
-      fov: 72
-    };
-  }
+  const compact = isCompactLayout();
+  const playerPosition = new THREE.Vector3(x, compact ? 2.8 : 2.2, z + (compact ? 7.35 : 5.9));
+  const cameraPosition = playerPosition.clone().add(new THREE.Vector3(0, 0.62, 0));
+  const look = new THREE.Vector3(x, compact ? 1.35 : 2.82, z);
+  const direction = look.clone().sub(cameraPosition).normalize();
   return {
-    position: new THREE.Vector3(x, 2.2, z + 5.9),
-    look: new THREE.Vector3(x, 0.4, z),
-    pitch: 0,
-    fov: 66
+    position: playerPosition,
+    cameraPosition,
+    look,
+    pitch: Math.asin(THREE.MathUtils.clamp(direction.y, -1, 1)),
+    fov: compact ? 72 : 66
   };
 }
 
@@ -1230,7 +1228,6 @@ async function startRoomTransition(id) {
   const startLook = new THREE.Vector3(activeX, 2.2, activeZ);
   const overview = new THREE.Vector3(mapCenter.x, 78, mapCenter.z + 2);
   const targetOverview = new THREE.Vector3(x, 50, z + 1.5);
-  const finish = view.position.clone().add(new THREE.Vector3(0, 0.62, 0));
   transition = {
     room,
     elapsed: 0,
@@ -1242,7 +1239,7 @@ async function startRoomTransition(id) {
     overviewLook: mapCenter,
     targetOverview,
     targetLook: view.look,
-    finish,
+    finish: view.cameraPosition,
     startFov: camera.fov,
     overviewFov: 52,
     endFov: view.fov
