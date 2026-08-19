@@ -9,7 +9,7 @@ import { ThreeMFLoader } from "three/addons/loaders/3MFLoader.js";
 const canvas = document.querySelector("#world");
 const interfaceLayer = document.querySelector("#interface");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.08));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = false;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -308,6 +308,7 @@ const freeRotationRooms = new Set(["shoe", "hanger"]);
 const centeredPivotRooms = new Set(["shoe", "hanger", "tripod"]);
 
 const roomById = new Map(rooms.map((room) => [room.id, room]));
+const roomGroups = new Map();
 const exhibits = [];
 const exhibitByRoomId = new Map();
 const loadedModels = new Set();
@@ -332,6 +333,7 @@ let isPanningPdf = false;
 let lastPdfPointer = new THREE.Vector2(0, 0);
 let copyTypeTimer = null;
 let panelTimer = null;
+let modelLoadTimer = null;
 const planDeckOrder = new Map();
 const keys = new Set();
 const teleportTarget = new THREE.Vector3(0, 2.4, 6);
@@ -567,7 +569,16 @@ function createRoom(room) {
   return group;
 }
 
-rooms.forEach(createRoom);
+rooms.forEach((room) => {
+  roomGroups.set(room.id, createRoom(room));
+});
+
+function updateRoomVisibility() {
+  const visibleRooms = new Set([activeRoom?.id, transition?.sourceRoomId, transition?.room.id].filter(Boolean));
+  roomGroups.forEach((group, id) => {
+    group.visible = visibleRooms.size === 0 || visibleRooms.has(id);
+  });
+}
 
 function createCloud(position, scale = 1, speed = 0.16) {
   const cloud = new THREE.Group();
@@ -913,6 +924,14 @@ function ensureRoomModelLoaded(roomId) {
   return loadPromise;
 }
 
+function scheduleRoomModelLoad(roomId, delay = 900) {
+  clearTimeout(modelLoadTimer);
+  modelLoadTimer = setTimeout(() => {
+    if (transition || activeRoom?.id !== roomId) return;
+    ensureRoomModelLoaded(roomId);
+  }, delay);
+}
+
 async function preloadExternalModels() {
   for (const roomId of externalModelRooms) {
     await ensureRoomModelLoaded(roomId);
@@ -1216,13 +1235,8 @@ function updateRoomPanel(room, animate = true) {
 async function startRoomTransition(id) {
   const room = roomById.get(id);
   if (!room || room.id === activeRoom.id || transition) return;
+  clearTimeout(modelLoadTimer);
   if (document.pointerLockElement === canvas) document.exitPointerLock();
-  if (previewModelRooms.has(room.id) && !loadedPreviews.has(room.id)) {
-    await ensureRoomPreviewLoaded(room.id);
-  }
-  if (!deferredModelRooms.has(room.id) && externalModelRooms.includes(room.id) && !loadedModels.has(room.id)) {
-    await ensureRoomModelLoaded(room.id);
-  }
 
   const view = getRoomView(room);
   const [x, z] = room.position;
@@ -1235,6 +1249,7 @@ async function startRoomTransition(id) {
   const finish = view.position.clone().add(new THREE.Vector3(0, 0.62, 0));
   transition = {
     room,
+    sourceRoomId: activeRoom.id,
     elapsed: 0,
     startClock: clock.elapsedTime,
     duration: 2.35,
@@ -1265,9 +1280,10 @@ function setActiveRoom(room) {
   updateRoomPanel(room, hadActiveRoom);
   interfaceLayer.classList.toggle("home-active", room.id === "home");
   interfaceLayer.classList.toggle("about-active", room.id === "credits");
+  updateRoomVisibility();
   updateAboutProfileVisibility();
   mapButtons.forEach((button) => button.classList.toggle("active", button.dataset.room === room.id));
-  if (!transition) ensureRoomModelLoaded(room.id);
+  if (!transition) scheduleRoomModelLoad(room.id, hadActiveRoom ? 900 : 180);
   if (!transition) updateProjectAssets(room);
 }
 
@@ -1402,12 +1418,11 @@ function updatePlayer(dt) {
       camera.fov = transition.endFov;
       camera.updateProjectionMatrix();
       transition = null;
+      updateRoomVisibility();
       updateAboutProfileVisibility();
       updateProjectAssets(destinationRoom);
-      if (deferredModelRooms.has(destinationRoom.id)) {
-        if (!loadedModels.has(destinationRoom.id)) {
-          setTimeout(() => ensureRoomModelLoaded(destinationRoom.id), 180);
-        }
+      if (!loadedModels.has(destinationRoom.id)) {
+        scheduleRoomModelLoad(destinationRoom.id, 1200);
       }
     }
     return;
@@ -1487,7 +1502,7 @@ function animate() {
     cloud.rotation.y = Math.sin(t * 0.05 + phase) * 0.08;
     cloud.visible = !transition;
   });
-  world.step(1 / 60, dt, 3);
+  if (!transition) world.step(1 / 60, dt, 3);
   updatePlayer(dt);
 
   exhibits.forEach((item, i) => {
@@ -1542,6 +1557,3 @@ window.addEventListener("resize", () => {
 setActiveRoom(rooms[0]);
 document.body.classList.remove("app-loading");
 animate();
-setTimeout(() => {
-  preloadExternalModels();
-}, 650);
