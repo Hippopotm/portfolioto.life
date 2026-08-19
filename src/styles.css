@@ -358,7 +358,7 @@ h1 {
   min-width: 0;
   margin: 0;
   font-size: clamp(1.7rem, 2.8vw, 2.35rem);
-  line-height: 1.05;
+  line-height: 1.12;
   letter-spacing: 0;
 }
 
@@ -429,14 +429,14 @@ h1 {
 .howard-mark {
   display: grid;
   flex: 0 0 auto;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   place-items: center;
-  border: 3px solid #a23b2a;
-  border-radius: 50%;
-  background: #17324d;
+  border: 0;
+  border-radius: 6px;
+  background: #009999;
   color: #ffffff;
-  font-size: 0.42rem;
+  font-size: 0.48rem;
   font-weight: 800;
   line-height: 1;
   text-align: center;
@@ -447,6 +447,7 @@ h1 {
   grid-area: actions;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
   margin-top: 4px;
 }
 
@@ -461,24 +462,14 @@ h1 {
 }
 
 .message-action {
-  min-width: 118px;
+  min-width: 132px;
   background: #0a66c2;
   color: #ffffff;
 }
 
-.message-action::before {
-  content: "";
-  width: 0;
-  height: 0;
-  margin-right: 9px;
-  border-top: 9px solid transparent;
-  border-bottom: 9px solid transparent;
-  border-left: 16px solid #ffffff;
-  transform: rotate(-36deg);
-}
-
 .more-action {
-  min-width: 78px;
+  min-width: 116px;
+  padding: 0 18px;
   border: 1.5px solid #505050;
   color: #3d3d3d;
 }
