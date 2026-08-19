@@ -1227,11 +1227,12 @@ async function startRoomTransition(id) {
   const view = getRoomView(room);
   const [x, z] = room.position;
   const [activeX, activeZ] = activeRoom.position;
-  const start = new THREE.Vector3(player.position.x, Math.max(player.position.y, 2.2), player.position.z);
+  const start = camera.position.clone();
   const mapCenter = new THREE.Vector3(33, 0, -22);
   const startLook = new THREE.Vector3(activeX, 2.2, activeZ);
   const overview = new THREE.Vector3(mapCenter.x, 78, mapCenter.z + 2);
   const targetOverview = new THREE.Vector3(x, 50, z + 1.5);
+  const finish = view.position.clone().add(new THREE.Vector3(0, 0.62, 0));
   transition = {
     room,
     elapsed: 0,
@@ -1243,7 +1244,7 @@ async function startRoomTransition(id) {
     overviewLook: mapCenter,
     targetOverview,
     targetLook: view.look,
-    finish: view.position,
+    finish,
     startFov: camera.fov,
     overviewFov: 52,
     endFov: view.fov
