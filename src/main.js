@@ -1254,6 +1254,7 @@ function setActiveRoom(room) {
   if (activeRoom?.id === room.id) return;
   const hadActiveRoom = Boolean(activeRoom);
   activeRoom = room;
+  interfaceLayer.dataset.room = room.id;
   if (hadActiveRoom) typeRoomCopy(room.copy);
   else roomCopy.textContent = room.copy;
   updateRoomPanel(room, hadActiveRoom);
@@ -1521,6 +1522,16 @@ window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  if (activeRoom && !transition && document.pointerLockElement !== canvas) {
+    const view = getRoomView(activeRoom);
+    teleportTarget.copy(view.position);
+    player.position.set(teleportTarget.x, teleportTarget.y, teleportTarget.z);
+    player.velocity.set(0, 0, 0);
+    yaw = 0;
+    pitch = view.pitch;
+    camera.fov = view.fov;
+    camera.updateProjectionMatrix();
+  }
 });
 
 setActiveRoom(rooms[0]);
