@@ -334,6 +334,26 @@ const planDeckOrder = new Map();
 const keys = new Set();
 const teleportTarget = new THREE.Vector3(0, 2.4, 6);
 
+function isCompactLayout() {
+  return window.innerWidth <= 760;
+}
+
+function getRoomView(room) {
+  const [x, z] = room.position;
+  const compact = isCompactLayout();
+  const playerPosition = new THREE.Vector3(x, compact ? 2.8 : 2.2, z + (compact ? 7.35 : 5.9));
+  const cameraPosition = playerPosition.clone().add(new THREE.Vector3(0, 0.62, 0));
+  const look = new THREE.Vector3(x, compact ? 1.35 : 2.82, z);
+  const direction = look.clone().sub(cameraPosition).normalize();
+  return {
+    position: playerPosition,
+    cameraPosition,
+    look,
+    pitch: Math.asin(THREE.MathUtils.clamp(direction.y, -1, 1)),
+    fov: compact ? 72 : 66
+  };
+}
+
 const hemi = new THREE.HemisphereLight(0xf4fbff, 0xc8b992, 1.45);
 scene.add(hemi);
 
@@ -1021,12 +1041,14 @@ world.addBody(player);
 function teleportTo(id) {
   const room = roomById.get(id);
   if (!room) return;
-  const [x, z] = room.position;
-  teleportTarget.set(x, 2.2, z + 5.9);
+  const view = getRoomView(room);
+  teleportTarget.copy(view.position);
   player.position.set(teleportTarget.x, teleportTarget.y, teleportTarget.z);
   player.velocity.set(0, 0, 0);
   yaw = 0;
-  pitch = 0;
+  pitch = view.pitch;
+  camera.fov = view.fov;
+  camera.updateProjectionMatrix();
   setActiveRoom(room);
 }
 
@@ -1198,14 +1220,14 @@ async function startRoomTransition(id) {
     await ensureRoomModelLoaded(room.id);
   }
 
+  const view = getRoomView(room);
   const [x, z] = room.position;
   const [activeX, activeZ] = activeRoom.position;
-  const start = new THREE.Vector3(player.position.x, Math.max(player.position.y, 2.2), player.position.z);
+  const start = camera.position.clone();
   const mapCenter = new THREE.Vector3(33, 0, -22);
   const startLook = new THREE.Vector3(activeX, 2.2, activeZ);
   const overview = new THREE.Vector3(mapCenter.x, 78, mapCenter.z + 2);
   const targetOverview = new THREE.Vector3(x, 50, z + 1.5);
-  const finish = new THREE.Vector3(x, 2.2, z + 5.9);
   transition = {
     room,
     elapsed: 0,
@@ -1216,11 +1238,11 @@ async function startRoomTransition(id) {
     overview,
     overviewLook: mapCenter,
     targetOverview,
-    targetLook: new THREE.Vector3(x, 0.4, z),
-    finish,
+    targetLook: view.look,
+    finish: view.cameraPosition,
     startFov: camera.fov,
     overviewFov: 52,
-    endFov: 66
+    endFov: view.fov
   };
   setActiveRoom(room);
   activeAssetRoomId = null;
